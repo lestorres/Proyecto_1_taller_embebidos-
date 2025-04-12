@@ -1,4 +1,3 @@
-
 import sys
 import signal
 import os
@@ -9,9 +8,9 @@ from utils.gst_utils import gst_launch
 DEVICE = 'AUTO'
 
 # Rutas a las carpetas de los modelos
-MODELS_PATH = os.path.expanduser('~/embebidos/local_model/models/models$')  
-MODELS_PROC_PATH = os.path.expanduser('~/embebidos/local_model/models/model_proc')  
-
+MODELS_PATH = './models'
+MODELS_PROC_PATH = './model_proc'
+INPUT = './inputs/person-bicycle-car-detection.mp4'
 
 # Models
 MODEL_1="person-vehicle-bike-detection-2004"
@@ -27,9 +26,6 @@ VEHICLE_CLASSIFICATION_MODEL_PROC=f"{MODELS_PROC_PATH}/{MODEL_3}.json"
 DETECTION_MODEL=f"{MODELS_PATH}/{MODEL_1}/FP32/{MODEL_1}"
 PERSON_CLASSIFICATION_MODEL=f"{MODELS_PATH}/{MODEL_2}/FP32/{MODEL_2}.xml"
 VEHICLE_CLASSIFICATION_MODEL=f"{MODELS_PATH}/{MODEL_3}/FP32/{MODEL_3}.xml"
-
-#INPUT DE VIDEO
-INPUT = os.path.expanduser('~/inputs/person-bicycle-car-detection.mp4')  # Ruta al video input
 
 # Tracker
 TRACKING_TYPE="short-term-imageless" # Object tracking type, valid values: short-term-imageless, zero-term, zero-term-imageless

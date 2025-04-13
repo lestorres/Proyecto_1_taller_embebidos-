@@ -1,0 +1,26 @@
+services: # each service corresponds to a container
+  dlstreamer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tec_embedded/vehicle_person_detection:devel
+    privileged: true  # grant access to all resources
+    network_mode: host  # indicates to docker to share the host network
+    working_dir: /home/dlstreamer  # sets the working directory inside container
+
+    devices:
+      - /dev/dri:/dev/dri  # access to GPU or other accelerator
+    volumes:
+      - ~/.Xauthority:/home/dlstreamer/.Xauthority  # maps x-authentication file
+      - /tmp/.X11-unix:/tmp/.X11-unix  # maps the x11 socket directory
+      - /dev/bus/usb:/dev/bus/usb  # allows USB devices access
+      - .:/home/dlstreamer/code:rw  # maps entire project to /code inside container
+      
+
+    environment:
+      - XDG_RUNTIME_DIR=/tmp
+      - DISPLAY=${DISPLAY}
+
+    stdin_open: true  # equivalent to docker run -i
+    tty: true         # equivalent to docker run -t
+    command: bash     # starts bash shell

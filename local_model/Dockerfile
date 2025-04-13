@@ -3,43 +3,40 @@ FROM intel/dlstreamer:${OS_VER}
 
 USER root
 
-# Instala dependencias de sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    libgstreamer1.0-dev \
-    libgstreamer-plugins-base1.0-dev \
-    libgirepository1.0-dev \
-    python3-gi \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-bad \
-    gstreamer1.0-plugins-ugly \
-    gstreamer1.0-libav \
-    && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update; \
+    apt-get install -y git \
+        libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev\
+        libgtk2.0-dev \
+        pkg-config \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev
 
-# Desinstala OpenCV preinstalado y compila OpenCV 4.7.0 con GStreamer
-RUN pip3 uninstall -y opencv-python && \
-    git clone https://github.com/opencv/opencv.git && \
+
+# Uninstall the current OpenCV module
+RUN pip3 uninstall -y opencv-python
+
+# Build OpenCV 4.7.0
+RUN git clone https://github.com/opencv/opencv.git && \
     cd opencv && git checkout 4.7.0 && \
     mkdir build && cd build && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
-          -D CMAKE_INSTALL_PREFIX=/usr/local \
-          -D WITH_GSTREAMER=ON \
-          -D BUILD_opencv_python3=ON \
-          -D PYTHON_EXECUTABLE=$(which python3) .. && \
-    make -j$(nproc) && make install && \
-    cd / && rm -rf opencv
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D WITH_GSTREAMER=ON \
+    -D BUILD_opencv_python3=yes \
+	-D PYTHON_EXECUTABLE=$(which python3) .. && \
+    make -j$(nproc) && \
+    make install
 
-# Cambia a usuario dlstreamer (mejor práctica)
 USER dlstreamer
 
-# Instala dependencias de Python
-RUN pip3 install --no-cache-dir pillow matplotlib numpy PyGObject
+# Install additional python dependencies
+RUN pip3 install pillow \
+    matplotlib
 
-# Establece carpeta de trabajo
-WORKDIR /home/dlstreamer/app
-
-# Copia tu código (modifica si usas .dockerignore)
-COPY . .
-
-# Comando por defecto para correr tu script
-CMD ["python3", "deteccion.py"]
+# Download required models from the OpenVINO model zoo
+RUN mkdir models && cd models && \
+    omz_downloader --name person-vehicle-bike-detection-2004 --precisions FP32 && \
+    omz_downloader --name person-attributes-recognition-crossroad-0230 --precisions FP32 && \
+    omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32

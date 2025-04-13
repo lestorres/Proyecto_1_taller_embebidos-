@@ -1,60 +1,62 @@
-import sys
-import signal
 import os
-
 from utils.gst_utils import gst_launch
-# Inicialización de GStreamer
 
-DEVICE = 'AUTO'
+# General
+DEVICE = "AUTO" #NPU, CPU (ELIJO)
 
-# Rutas a las carpetas de los modelos
-MODELS_PATH = './models'
-MODELS_PROC_PATH = './model_proc'
-INPUT = './inputs/person-bicycle-car-detection.mp4'
+# Paths
+MODELS_PATH = "/home/dlstreamer/models"
+MODELS_PROC_PATH = "/home/dlstreamer/code/model_proc"
 
 # Models
-MODEL_1="person-vehicle-bike-detection-2004"
-MODEL_2="person-attributes-recognition-crossroad-0230"
-MODEL_3="vehicle-attributes-recognition-barrier-0039"
+MODEL_1 = "person-vehicle-bike-detection-2004"
+MODEL_2 = "person-attributes-recognition-crossroad-0230"
+MODEL_3 = "vehicle-attributes-recognition-barrier-0039"
 
 # Model proc
-DETECTION_MODEL_PROC=f"{MODELS_PROC_PATH}/{MODEL_1}.json"
-PERSON_CLASSIFICATION_MODEL_PROC=f"{MODELS_PROC_PATH}/{MODEL_2}.json"
-VEHICLE_CLASSIFICATION_MODEL_PROC=f"{MODELS_PROC_PATH}/{MODEL_3}.json"
+DETECTION_MODEL_PROC = f"{MODELS_PROC_PATH}/{MODEL_1}.json"
+PERSON_CLASSIFICATION_MODEL_PROC = f"{MODELS_PROC_PATH}/{MODEL_2}.json"
+VEHICLE_CLASSIFICATION_MODEL_PROC = f"{MODELS_PROC_PATH}/{MODEL_3}.json"
 
 # Model paths
-DETECTION_MODEL=f"{MODELS_PATH}/{MODEL_1}/FP32/{MODEL_1}"
-PERSON_CLASSIFICATION_MODEL=f"{MODELS_PATH}/{MODEL_2}/FP32/{MODEL_2}.xml"
-VEHICLE_CLASSIFICATION_MODEL=f"{MODELS_PATH}/{MODEL_3}/FP32/{MODEL_3}.xml"
+DETECTION_MODEL = f"{MODELS_PATH}/intel/{MODEL_1}/FP32/{MODEL_1}.xml"
+PERSON_CLASSIFICATION_MODEL = f"{MODELS_PATH}/intel/{MODEL_2}/FP32/{MODEL_2}.xml"
+VEHICLE_CLASSIFICATION_MODEL = f"{MODELS_PATH}/intel/{MODEL_3}/FP32/{MODEL_3}.xml"
 
 # Tracker
-TRACKING_TYPE="short-term-imageless" # Object tracking type, valid values: short-term-imageless, zero-term, zero-term-imageless
+TRACKING_TYPE = "short-term-imageless"  # 
 
 # Detector
-DETECTION_INTERVAL=3
+DETECTION_INTERVAL = 3 # INTERVALO DE 
 
 # Classifier
-RECLASSIFY_INTERVAL=10 # Reclassify interval (run classification every 10th frame
+RECLASSIFY_INTERVAL = 10
 
-# Composición del pipeline de GStreamer para detección de vehículos, personas, motos y bicicletas
+# Input local (convertimos ruta a URI)
+INPUT_PATH = "/home/dlstreamer/code/inputs/conduccion_2.mp4"
+INPUT_URI = f"file://{INPUT_PATH}"
+
+OUTPUT_PATH = "/home/dlstreamer/code/outputs/salida.mp4"
+OUTPUT_URI = f"file://{OUTPUT_PATH}"
+
+# GStreamer pipeline
 pipeline_str = (
-    f'urisourcebin buffer-size=4096 uri=file://{INPUT} ! '
+    f'urisourcebin buffer-size=4096 uri={INPUT_URI} ! '
     f'decodebin ! '
     f'queue ! '
-    f'gvadetect model={DETECTION_MODEL} model-proc={DETECTION_MODEL_PROC} inference-interval={DETECTION_INTERVAL} threshold=0.4 device={DEVICE} ! '
+    f'gvadetect model={DETECTION_MODEL} model-proc={DETECTION_MODEL_PROC} '
+    f'inference-interval={DETECTION_INTERVAL} threshold=0.4 device={DEVICE} ! '
     f'queue ! '
     f'gvatrack tracking-type={TRACKING_TYPE} ! '
     f'queue ! '
-    f'gvaclassify model={PERSON_CLASSIFICATION_MODEL} model-proc={PERSON_CLASSIFICATION_MODEL_PROC} reclassify-interval={RECLASSIFY_INTERVAL} device={DEVICE} object-class=person ! '
+    f'gvaclassify model={PERSON_CLASSIFICATION_MODEL} model-proc={PERSON_CLASSIFICATION_MODEL_PROC} '
+    f'reclassify-interval={RECLASSIFY_INTERVAL} device={DEVICE} object-class=person ! '
     f'queue ! '
-    f'gvaclassify model={VEHICLE_CLASSIFICATION_MODEL} model-proc={VEHICLE_CLASSIFICATION_MODEL_PROC} reclassify-interval={RECLASSIFY_INTERVAL} device={DEVICE} object-class=vehicle ! '
+    f'gvaclassify model={VEHICLE_CLASSIFICATION_MODEL} model-proc={VEHICLE_CLASSIFICATION_MODEL_PROC} '
+    f'reclassify-interval={RECLASSIFY_INTERVAL} device={DEVICE} object-class=vehicle ! '
     f'queue ! '
     f'gvawatermark ! videoconvert ! video/x-raw,format=BGR ! appsink'
 )
 
-
-
-# Configurar y lanzar el pipeline de GStreamer
-pipeline = gst_launch(pipeline_str)
-
-ret = pipeline
+# Ejecutar pipeline
+gst_launch(pipeline_str)

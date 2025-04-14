@@ -14,3 +14,6 @@ Comandos para levantar el contenedor Docker de la aplicacion
 - docker compose build dlstreamer
 
 - docker compose run --rm dlstreamer
+  - python3 deteccion.py
+
+

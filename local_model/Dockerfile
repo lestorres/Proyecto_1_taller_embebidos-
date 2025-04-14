@@ -11,7 +11,8 @@ RUN apt-get update; \
         pkg-config \
         libavcodec-dev \
         libavformat-dev \
-        libswscale-dev
+        libswscale-dev \
+        vim
 
 
 # Uninstall the current OpenCV module
@@ -34,9 +35,3 @@ USER dlstreamer
 # Install additional python dependencies
 RUN pip3 install pillow \
     matplotlib
-
-# Download required models from the OpenVINO model zoo
-RUN mkdir models && cd models && \
-    omz_downloader --name person-vehicle-bike-detection-2004 --precisions FP32 && \
-    omz_downloader --name person-attributes-recognition-crossroad-0230 --precisions FP32 && \
-    omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32

@@ -5,7 +5,7 @@ from utils.gst_utils import gst_launch
 DEVICE = "AUTO" #NPU, CPU (ELIJO)
 
 # Paths
-MODELS_PATH = "/home/dlstreamer/models"
+MODELS_PATH = "/home/dlstreamer/code/models"
 MODELS_PROC_PATH = "/home/dlstreamer/code/model_proc"
 
 # Models
@@ -33,7 +33,8 @@ DETECTION_INTERVAL = 3 # INTERVALO DE
 RECLASSIFY_INTERVAL = 10
 
 # Input local (convertimos ruta a URI)
-INPUT_PATH = "/home/dlstreamer/code/inputs/conduccion_2.mp4"
+INPUT_PATH = "/home/dlstreamer/code/inputs/conduccion_1.mp4"
+#INPUT_PATH = "/home/dlstreamer/code/inputs/person-bicycle-car-detection.mp4"
 INPUT_URI = f"file://{INPUT_PATH}"
 
 OUTPUT_PATH = "/home/dlstreamer/code/outputs/salida.mp4"

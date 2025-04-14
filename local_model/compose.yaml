@@ -6,7 +6,7 @@ services: # each service corresponds to a container
     image: tec_embedded/vehicle_person_detection:devel
     privileged: true  # grant access to all resources
     network_mode: host  # indicates to docker to share the host network
-    working_dir: /home/dlstreamer  # sets the working directory inside container
+    working_dir: /home/dlstreamer/code  # sets the working directory inside container
 
     devices:
       - /dev/dri:/dev/dri  # access to GPU or other accelerator

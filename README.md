@@ -4,4 +4,13 @@ El objetivo del proyecto es desarrollar un sistema operativo a la medida para  a
 
 
 ## Aplicación Elegida:
-"Detección de Vehículos y Personas"
+"Detección de Vehículos y Personas en cámaras dashcam de vehículos mediante Intel Openvino + DLStreamer y Yocto Project"
+
+
+# DockerFile
+Comandos para levantar el contenedor Docker de la aplicacion
+
+
+- docker compose build dlstreamer
+
+- docker compose run --rm dlstreamer

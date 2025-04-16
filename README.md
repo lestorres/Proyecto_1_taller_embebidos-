@@ -10,44 +10,51 @@ El objetivo del proyecto es desarrollar un sistema operativo a la medida para  a
 ## DockerFile
 Comandos para levantar el contenedor Docker de la aplicacion
 
+```plaintext
+ docker compose build dlstreamer
+```
+```plaintext
+docker compose run --rm dlstreamer
+```
+Una vez levantado el docker, se debe ejecutar el script de la siguiente manera.
 
-- docker compose build dlstreamer
-
-- docker compose run --rm dlstreamer
-  - python3 deteccion.py
-
+```plaintext
+python3 deteccion.py
+```
 
 
-## Yocto 
-### Estructura de archivos de los contenidos importantes de yocto
+## Yocto
 
+### Estructura de archivos de los contenidos importantes de Yocto en github
+
+```plaintext
 yocto/
 │
 ├── meta-mylayer/
-│   │
 │   ├── conf/
 │   │   └── layer.conf
 │   ├── recipes-example/
-│   │
-│   └── local_model 
+│   └── local_model/
 │
 ├── build-templates/
-│   │
 │   ├── local.conf
 │   └── bblayers.conf
 │
 └── other-scripts/
+```
 
 
+### Crear imagen
 
-###Crear imagen
-
-- bitbake core-image-minimal
+```plaintext
+bitbake core-image-minimal
+```
 
 ### Emular imagen generada
 
-- runqemu qemux86-64
-
+```plaintext
+runqemu qemux86-64
+```
 
 
 

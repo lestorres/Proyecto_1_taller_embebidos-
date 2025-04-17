@@ -62,3 +62,15 @@ runqemu qemux86-64
 ssh -X root@192.168.7.2
 ```
 
+### Verificar el contenido de la aplicación
+Al ingresar:
+
+```plaintext
+ls /usr/bin/myapp
+```
+Debe aparecer algo similar a esto:
+
+```plaintext
+deteccion.py  inputs/  model_proc/  models/  utils/
+```
+

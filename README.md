@@ -74,3 +74,9 @@ Debe aparecer algo similar a esto:
 deteccion.py  inputs/  model_proc/  models/  utils/
 ```
 
+### Ingresar y ejecutar el contenido de la aplicación
+Ingresar al directorio de la aplicación
+```plaintext
+cd /usr/bin/myapp
+```
+

@@ -67,6 +67,10 @@ ssh -X root@192.168.7.2
 gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
 ```
 
+### Prueba de multimedia de videos de entrada con Gstreamer
+```plaintext
+gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp4 ! decodebin ! videoconvert ! ximagesink
+```
 
 ### Verificar el contenido de la aplicación
 Al ingresar:

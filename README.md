@@ -62,6 +62,12 @@ runqemu qemux86-64
 ssh -X root@192.168.7.2
 ```
 
+### Prueba de multimedia Gstreamer
+```plaintext
+gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
+```
+
+
 ### Verificar el contenido de la aplicación
 Al ingresar:
 

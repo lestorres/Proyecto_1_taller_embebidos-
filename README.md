@@ -110,13 +110,13 @@ core-image-minimal-qemux86-64.rootfs-20250418215706.wic.vdi
 Se debe configurar una dirección ip para acceder a la máquina virtual
 
 ```plaintext
-ifconfig eth0 192.168.1.100 netmask 255.255.255.0 up
+dhcpcd eth0
 ```
 
 ### Conexión ssh para utilizar el gestor de ventanas de la computadora
 
 ```plaintext
-ssh -X root@192.168.1.100
+ssh -X root@>ip-eth0>
 ```
 
 ### Verificar el contenido de la aplicación

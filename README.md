@@ -113,10 +113,16 @@ Se debe configurar una dirección ip para acceder a la máquina virtual
 dhcpcd eth0
 ```
 
+Verificar la ip de eth0
+
+```plaintext
+ip a
+```
+
 ### Conexión ssh para utilizar el gestor de ventanas de la computadora
 
 ```plaintext
-ssh -X root@>ip-eth0>
+ssh -X root@<ip-eth0>
 ```
 
 ### Verificar el contenido de la aplicación

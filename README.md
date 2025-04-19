@@ -58,7 +58,7 @@ bitbake core-image-minimal
 runqemu qemux86-64
 ```
 
-### Conexión ssh para utilizar el gestor de ventanas de la computadora (única parada cada computadora)
+### Conexión ssh para utilizar el gestor de ventanas de la computadora (única para cada computadora)
 
 ```plaintext
 ssh -X root@192.168.7.2

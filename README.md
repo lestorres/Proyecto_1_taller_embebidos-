@@ -90,28 +90,236 @@ A este punto la aplicación debe mostrar lo siguiente:
 
 
 
-## Yocto
+## Configuración del Entorno: Imagen minima YoctoProject
 
-### Estructura de archivos de los contenidos importantes de Yocto en github
+---
+###  Target del Proyecto
+
+- **Tipo de sistema:** Máquina virtual x86 (VirtualBox)
+- **Sistema operativo de destino:** Imagen Linux generada con Yocto Project
+- **Imagen base utilizada:** `core-image-minimal` personalizada
+- **Componentes integrados:**
+  - Aplicación Python con inferencia de modelo (OpenVINO™)
+  - Dependencias del sistema (bibliotecas de Python, OpenCV, etc.)
+  - Modelo preentrenado seleccionado desde OpenVINO™ Model Zoo
+- **Propósito:** Ejecutar la aplicación final de procesamiento multimedia en un entorno controlado y reproducible
+---
+
+
+### Prerequisitos del sistema
+Según la documentación de YoctoProject [2] se requiere:
+- **Espacio en disco:** al menos **90 GB** libres (más espacio mejora el rendimiento en múltiples builds).
+- **Memoria RAM:** al menos **8 GB** 
+- **Distribución Linux compatible:**  Ubuntu / Debian Fedora / openSUSE / CentOS
+- Además de las herramientas:
+
+| Herramienta     | Versión mínima |
+|------------------|----------------|
+| Git              | 1.8.3.1        |
+| tar              | 1.28           |
+| Python           | 3.8.0          |
+| GCC              | 8.0            |
+| GNU Make         | 4.0            |
+
+
+### Configuración del Entorno: Imagen minima pasos a seguir
+1) Clonar e ingresar al directorio  `poky`
+
+```plaintext
+git clone git://git.yoctoproject.org/poky
+cd poky
+```
+
+2) Cambiar a la rama de scarthgap y hacer pull:
+   
+ ```plaintext
+$ git branch -a
+```
+
+```plaintext
+git checkout -t origin/scarthgap -b my-scarthgap
+```
+
+```plaintext
+git pull
+```
+### Estructura de archivos de los contenidos básicos de poky (Por defecto)
 
 ```plaintext
 yocto/
 │
-├── meta-mylayer/
-│   ├── conf/
-│   │   └── layer.conf
-│   ├── recipes-example/
-│   └── local_model/
+├── bitbake/                       # Motor de construcción BitBake
 │
-├── build-templates/
-│   ├── local.conf
-│   └── bblayers.conf
+├── build/                         # Directorio de trabajo (generado tras ejecutar oe-init-build-env)
 │
-└── other-scripts/
+├── documentation/                # Documentación de Poky y Yocto Project
+│
+├── meta/                          # Meta-capa principal de OpenEmbedded-Core (recetas base)
+│
+├── meta-poky/                     # Configuración y contenido base de Poky
+│
+├── meta-selftest/                 # Pruebas automáticas para verificar integridad de recetas y configuraciones
+│
+├── meta-skeleton/                 # Plantillas básicas para crear recetas y capas
+│
+├── meta-yocto-bsp/                # Soporte de Board Support Packages (BSPs)
+│
+├── oe-init-build-env              # Script para inicializar el entorno de construcción
+│
+└── README*.md                 # Documentacion
+```
+
+### Dependencias de la capa OpenVino y meta-mylayer
+La documentación de intel para OpenVino [3] indica los siguientes pasos para su instalación:
+
+1) Clonar los repositorios dentro de poky.
+```plaintext
+git clone https://git.yoctoproject.org/meta-intel
+git clone https://git.openembedded.org/meta-openembedded
+git clone https://github.com/kraj/meta-clang.git
+```
+
+2. Añadir las capas requieridas dentro del entorno `oe-init-build-env`.
+
+```plaintext
+source poky/oe-init-build-env
+```
+
+```plaintext
+bitbake-layers add-layer ../meta-intel
+bitbake-layers add-layer ../meta-openembedded/meta-oe
+bitbake-layers add-layer ../meta-openembedded/meta-python
+bitbake-layers add-layer ../meta-openembedded/meta-multimedia
+bitbake-layers add-layer ../meta-openembedded/meta-networking
+bitbake-layers add-layer ../meta-clang
+```
+3. Comprobar la correcta instalacion de las capas.
+```plaintext
+bitbake-layers show-layers
+```
+La salida esperada:
+
+```plaintext
+NOTE: Starting bitbake server...
+layer                 path                                                                    priority
+========================================================================================================
+core                  /home/laptop/yocto/poky/build/../meta                                    5
+yocto                 /home/laptop/yocto/poky/build/../meta-poky                               5
+yoctobsp              /home/laptop/yocto/poky/build/../meta-yocto-bsp                          5
+openembedded-layer    /home/laptop/yocto/poky/build/../meta-openembedded/meta-oe               5
+meta-python           /home/laptop/yocto/poky/build/../meta-openembedded/meta-python           5
+multimedia-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-multimedia       5
+networking-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-networking       5
+intel                 /home/laptop/yocto/poky/build/../meta-intel                              5
+clang-layer           /home/laptop/yocto/poky/build/../meta-clang                              7
+```
+
+4) A este punto se debe añadir la capa con todo lo necesario para la capa de la aplicacion y se hace de la siguiente manera:
+- Desde el directorio "/home/laptop/yocto/poky/" y con el entorno activado "source poky/oe-init-build-env":
+
+```plaintext
+bitbake-layers create-layer meta-mylayer
+```
+Se generará la siguiente estructura
+
+```plaintext
+meta-mylayer/
+├── conf/
+│   └── layer.conf
+└── README
+```
+Sobre el directorio meta-mylayer se debe copiar la capa "meta-mylayer" del repositorio de git Proyecto_1_taller_embebidos, de forma que sea: 
+
+```plaintext
+meta-mylayer/
+      ├── conf/
+            └── layer.conf
+      ├── COPYING.MIT
+      ├── README
+      ├── recipes-myproject/
+             └── myapp/
+                     ├── myapp_1.0.bb
+                     └── files/
+                            ├── deteccion.py
+                            ├── reproducir.py
+                            ├── inputs/
+                            ├── model_proc/
+                            ├── models/
+                            └── utils/
+```
+Ahora se debe verificar nuevamente
+```plaintext
+bitbake-layers show-layers
+```
+La salida esperada:
+
+```plaintext
+NOTE: Starting bitbake server...
+layer                 path                                                                    priority
+========================================================================================================
+core                  /home/laptop/yocto/poky/build/../meta                                    5
+yocto                 /home/laptop/yocto/poky/build/../meta-poky                               5
+yoctobsp              /home/laptop/yocto/poky/build/../meta-yocto-bsp                          5
+openembedded-layer    /home/laptop/yocto/poky/build/../meta-openembedded/meta-oe               5
+meta-python           /home/laptop/yocto/poky/build/../meta-openembedded/meta-python           5
+multimedia-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-multimedia       5
+networking-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-networking       5
+intel                 /home/laptop/yocto/poky/build/../meta-intel                              5
+clang-layer           /home/laptop/yocto/poky/build/../meta-clang                              7
+meta-mylayer          /home/lesme/yocto/poky/meta-mylayer                                      6     -La capa de la aplicación..!!
 ```
 
 
-### Crear imagen
+
+### Estructura de archivos de los contenidos importantes en Yocto Project completo 
+
+```plaintext
+yocto/
+│
+├── bitbake/                       # Motor de construcción BitBake
+│
+├── build/                         # Directorio de trabajo (generado tras ejecutar oe-init-build-env)
+│
+├── contrib/                       # Scripts y herramientas de la comunidad
+│
+├── documentation/                # Documentación de Poky y Yocto Project
+│
+├── meta/                          # Meta-capa principal de OpenEmbedded-Core (recetas base)
+│
+├── meta-clang/                    # Soporte para compilador Clang/LLVM
+│
+├── meta-intel/                    # Capas para plataformas Intel
+│
+├── meta-mylayer/                  # Capa personalizada
+│   ├── conf/                      # Configuración de la capa
+│   │   └── layer.conf             # Definición de la capa
+│   └── recipes-myproject/         # Recetas de del proyeto
+│                 
+│
+├── meta-openembedded/            # Conjunto de capas adicionales de OpenEmbedded
+│
+├── meta-poky/                     # Configuración y contenido base de Poky
+│
+├── meta-selftest/                 # Pruebas automáticas para verificar integridad de recetas y configuraciones
+│
+├── meta-skeleton/                 # Plantillas básicas para crear recetas y capas
+│
+├── meta-yocto-bsp/                # Soporte de Board Support Packages (BSPs)
+│
+├── oe-init-build-env              # Script para inicializar el entorno de construcción
+│
+├── scripts/                       # Scripts de ayuda para tareas del sistema Yocto
+│
+├── README*.md                     # Documentación adicional
+│
+└── SECURITY.md, LICENSE*, etc.    # Archivos legales y de seguridad
+```
+
+
+
+
+
+### Crear imagen completa
 
 ```plaintext
 bitbake core-image-minimal
@@ -124,6 +332,13 @@ bitbake core-image-minimal
 ```plaintext
 runqemu qemux86-64
 ```
+
+
+
+
+
+
+
 
 ### Conexión ssh para utilizar el gestor de ventanas de la computadora (única para cada computadora)
 
@@ -160,6 +375,12 @@ python3 reproducir.py
 ```
 
 ## VirtualBox
+
+
+
+
+
+
 La imagen una vez cocinada, se encontrará ubicada en el directorio:
 
 ```plaintext
@@ -215,6 +436,7 @@ python3 reproducir.py
 
 # Referencias
 [1] L. Murillo, "openvino-workshop-tec," GitHub, 2025. [Online]. Available: https://github.com/lumurillo/openvino-workshop-tec
-
+[2] Yocto Project, “Yocto Project Documentation,” The Linux Foundation, [Online]. Available: https://docs.yoctoproject.org/
+[3]Intel Corporation, “Installing OpenVINO™ Toolkit with Yocto Project,” OpenVINO Documentation, 2023. [Online]. Available: https://docs.openvino.ai/2023.3/openvino_docs_install_guides_installing_openvino_yocto.html.
 
 

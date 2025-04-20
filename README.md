@@ -11,7 +11,7 @@ El objetivo del proyecto es desarrollar un sistema operativo a la medida para  a
 Comandos para levantar el contenedor Docker de la aplicacion
 
 ```plaintext
- docker compose build dlstreamer
+docker compose build dlstreamer
 ```
 ```plaintext
 docker compose run --rm dlstreamer
@@ -78,7 +78,7 @@ ls /usr/bin/myapp
 Debe aparecer algo similar a esto:
 
 ```plaintext
-deteccion.py  inputs/  model_proc/  models/  utils/
+deteccion.py  inputs/  model_proc/  models/  utils/ reproducir.py
 ```
 
 ### Ingresar y ejecutar el contenido de la aplicación
@@ -91,8 +91,6 @@ cd /usr/bin/myapp
 ```plaintext
 gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp4 ! decodebin ! videoconvert ! ximagesink
 ```
-
-
 
 ## VirtualBox
 La imagen una vez cocinada, se encontrará ubicada en el directorio:
@@ -134,7 +132,7 @@ ls /usr/bin/myapp
 Debe aparecer algo similar a esto:
 
 ```plaintext
-deteccion.py  inputs/  model_proc/  models/  utils/
+deteccion.py  inputs/  model_proc/  models/  utils/ reproducir.py
 ```
 
 ### Ingresar y ejecutar el contenido de la aplicación
@@ -147,6 +145,5 @@ cd /usr/bin/myapp
 ```plaintext
 python3 reproducir.py
 ```
-
 
 

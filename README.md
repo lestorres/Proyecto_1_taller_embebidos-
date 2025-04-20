@@ -81,7 +81,11 @@ docker compose run --rm dlstreamer
 ```plaintext
 python3 deteccion.py
 ```
-A este punto el modelo debe mostrar lo siguiente: 
+A este punto la aplicación debe mostrar lo siguiente: 
+
+<p align="center">
+  <img src="images_tutorial/docker_1.png"  width="1000"/>
+</p>
 
 
 

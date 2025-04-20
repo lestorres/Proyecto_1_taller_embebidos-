@@ -89,7 +89,7 @@ cd /usr/bin/myapp
 
 ### Prueba de multimedia de videos de entrada con Gstreamer
 ```plaintext
-gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp4 ! decodebin ! videoconvert ! ximagesink
+python3 reproducir.py
 ```
 
 ## VirtualBox

@@ -33,7 +33,7 @@ DETECTION_INTERVAL = 3 # INTERVALO DE
 RECLASSIFY_INTERVAL = 10
 
 # Input local (convertimos ruta a URI)
-INPUT_PATH = "/home/dlstreamer/code/inputs/conduccion_1.mp4"
+INPUT_PATH = "/home/dlstreamer/code/inputs/conduccion_2.mp4"
 #INPUT_PATH = "/home/dlstreamer/code/inputs/person-bicycle-car-detection.mp4"
 INPUT_URI = f"file://{INPUT_PATH}"
 

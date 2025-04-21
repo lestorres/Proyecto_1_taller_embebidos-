@@ -501,12 +501,9 @@ en contenedores Docker, requiere de un proceso de compilación y añadir las car
 
 
 2. Error al cocinar por no inicializar cada repositorio con el respectivo branch de scarthgap.(Solucionado)
-   El error se solucionaba al realizar "git checkout -t origin/scarthgap -b my-scarthgap" en cada uno de los repositorios clonados.
+- El error se solucionaba al realizar "git checkout -t origin/scarthgap -b my-scarthgap" en cada uno de los repositorios clonados.
    
-3. Error a la hora de crear la capa "meta-mylayer"
-
-
-4. Error por no contar con entorno gráfico X11 o gui (solucionado)
+3. Error por no contar con entorno gráfico X11 o gui (solucionado)
 ```plaintext
 root@qemux86-64:/usr/bin/myapp# gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
 Setting pipeline to PAUSED ...
@@ -516,10 +513,10 @@ MESA: error: ZINK: failed to choose pdev
 glx: failed to create drisw screen
 Killed
 ```
-La principal solución con tal de mantener una imagen mínima fue utilizar conexión por medio de ssh, para no malgastar recursos en una imagen con interfaz gráfica.
+- La principal solución con tal de mantener una imagen mínima fue utilizar conexión por medio de ssh, para no malgastar recursos en una imagen con interfaz gráfica.
 
-5. Latencia en la reproducción del video
-   Este error indicaba que la computadora era muy lenta, se solucionó cambiando el pipeline de la siguiente manera:
+4. Latencia en la reproducción del video
+- Este error indicaba que la computadora era muy lenta, se solucionó cambiando el pipeline de la siguiente manera:
 ```plaintext
 gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
 ```
@@ -527,9 +524,9 @@ esto por esto
 ```plaintext 
 gst-launch-1.0 videotestsrc ! videoconvert ! ximagesink   
 ```
-El problema se da porque no se tiene acceso al GPU y se debe realizar lo calculos utilizando CPU, al procesar un video con imagenes mejora el rendimiento.
+- El problema se da porque no se tiene acceso al GPU y se debe realizar lo calculos utilizando CPU, al procesar un video con imagenes mejora el rendimiento.
 
-7. Videos de más de 1 minuto de duración (NO SOLUCIONADO)
+5. Videos de más de 1 minuto de duración (NO SOLUCIONADO)
 ```plaintext
    root@qemux86-64:/usr/bin/myapp/inputs# gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp
 4 ! decodebin ! autovideosink
@@ -554,10 +551,10 @@ ERROR: pipeline doesn't want to preroll.
 Setting pipeline to NULL ...
 Freeing pipeline ...
 ```
-Este error requiere de la instalación de un decodificador de gstreamer "gstreamer1.0-plugins-ugly" pero ya se encontraba instalado, de momento se utilzaron video de menor duración.
+- Este error requiere de la instalación de un decodificador de gstreamer "gstreamer1.0-plugins-ugly" pero ya se encontraba instalado, de momento se utilizaron videos de menor duración.
 
 
-7. Error de licencias
+6. Error de licencias
 ```plaintext
    Sstate summary: Wanted 10 Local 0 Mirrors 0 Missed 10 Current 263 (0% match, 96% complete)   | ETA:  0:00:00
 Initialising tasks: 100% |###################################################################| Time: 0:00:01
@@ -580,9 +577,17 @@ Summary: 1 task failed:
     log: /home/lesme/yocto/poky/build/tmp/work/core2-64-poky-linux/myapp/1.0/temp/log.do_populate_lic.307222
 Summary: There were 2 ERROR messages, returning a non-zero exit code.
 ```
-Este error sucedio porque por error se eliminó la linea de local_cong de "LIC_FILES_CHKSUM += commercial"
+- Este error sucedio porque por error se eliminó la linea de local_cong de "LIC_FILES_CHKSUM += commercial"
 
 # Conclusiones y recomendaciones del proyecto
+
+### Conclusiones
+- El desarrollo de sistemas operativos embebidos requiere de conocimiento no solamente de software, si no también del harware a utilizar, ya que el correcto uso de las capacidades de los aceledores integrados dentro de dispositivos de bajo consumo y procesamiento puede definir su funcionalidad frente a aplicaciones demandantes de recursos de procesamiento como en caso de procesamiento de video.
+
+- La utilización de YoctoProject como flujo de trabajo de desarrollo de sistemas embebidos es aceptado por la gran gama de personalización y adaptación de su sistema, además del gran desarrollo de la proporcionado por su comunidad y documentación disponible haciendo que empresas como Intel se integren el desarrollo de YoctoProject con documentación y aplicaciones y por su amplia compatibilidad con diversos sistemas embebidos. 
+
+### Recomendaciones 
+- Para la integración de capas personalizadas desde cero, requiere de un proceso largo de solución de dependencias y solución de errores, por lo que revisar la documentación del flujo de desarollo es fundamental antes de iniciar con cualquier proyecto. De no ser así, es recomendable ajustar la aplicación a capas ya desarrolladas anteriormente.  
 
 
 # Referencias

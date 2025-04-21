@@ -351,6 +351,12 @@ IMAGE_FSTYPES = "wic.vdi" # tipo de disco para maquina virtual
 bitbake core-image-minimal
 ```
 
+<p align="center">
+  <img src="images_tutorial/bitbake_1.png"  width="1000"/>
+</p>
+
+
+
 ## Emulación de la imagen con Qemu
 
 ### Prerequisitos
@@ -425,7 +431,7 @@ La imagen una vez cocinada, se encontrará ubicada en el directorio:
 La imagen a utilizar en Virtual-Box será:
 
 ```plaintext
-core-image-minimal-qemux86-64.rootfs-20250418215706.wic.vdi
+core-image-minimal-qemux86-64.rootfs-20250421021442.wic.vdi
 ```
 Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotamente de la siguiente manera:
 
@@ -499,10 +505,12 @@ El problema residen en que se **Necesita de una capa con Glstramer** la cual req
 habría que hacerla de forma manual y conocimientos más profundos en las dependecian inclusive del sistema operativo, ya que este está planeado para funcionar únicamente en ubuntu y 
 en contenedores Docker, requiere de un proceso de compilación y añadir las características directo en la biblioteca de GSTREAMER, cosa que no se logró después de varios intentos. 
 
+---
 
-2. Error al cocinar por no inicializar cada repositorio con el respectivo branch de scarthgap.(Solucionado)
+2. Error al cocinar por no inicializar cada repositorio con el respectivo branch de scarthgap. (Solucionado)
 - El error se solucionaba al realizar "git checkout -t origin/scarthgap -b my-scarthgap" en cada uno de los repositorios clonados.
-   
+---   
+
 3. Error por no contar con entorno gráfico X11 o gui (solucionado)
 ```plaintext
 root@qemux86-64:/usr/bin/myapp# gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
@@ -514,8 +522,8 @@ glx: failed to create drisw screen
 Killed
 ```
 - La principal solución con tal de mantener una imagen mínima fue utilizar conexión por medio de ssh, para no malgastar recursos en una imagen con interfaz gráfica.
-
-4. Latencia en la reproducción del video
+---
+4. Latencia en la reproducción del video (No solucionado)
 - Este error indicaba que la computadora era muy lenta, se solucionó cambiando el pipeline de la siguiente manera:
 ```plaintext
 gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
@@ -525,7 +533,7 @@ esto por esto
 gst-launch-1.0 videotestsrc ! videoconvert ! ximagesink   
 ```
 - El problema se da porque no se tiene acceso al GPU y se debe realizar lo calculos utilizando CPU, al procesar un video con imagenes mejora el rendimiento.
-
+---
 5. Videos de más de 1 minuto de duración (NO SOLUCIONADO)
 ```plaintext
    root@qemux86-64:/usr/bin/myapp/inputs# gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp
@@ -553,8 +561,8 @@ Freeing pipeline ...
 ```
 - Este error requiere de la instalación de un decodificador de gstreamer "gstreamer1.0-plugins-ugly" pero ya se encontraba instalado, de momento se utilizaron videos de menor duración.
 
-
-6. Error de licencias
+---
+6. Error de licencias (Solucionado)
 ```plaintext
    Sstate summary: Wanted 10 Local 0 Mirrors 0 Missed 10 Current 263 (0% match, 96% complete)   | ETA:  0:00:00
 Initialising tasks: 100% |###################################################################| Time: 0:00:01
@@ -582,12 +590,16 @@ Summary: There were 2 ERROR messages, returning a non-zero exit code.
 # Conclusiones y recomendaciones del proyecto
 
 ### Conclusiones
-- El desarrollo de sistemas operativos embebidos requiere de conocimiento no solamente de software, si no también del harware a utilizar, ya que el correcto uso de las capacidades de los aceledores integrados dentro de dispositivos de bajo consumo y procesamiento puede definir su funcionalidad frente a aplicaciones demandantes de recursos de procesamiento como en caso de procesamiento de video.
+- El desarrollo de sistemas operativos embebidos requiere conocimiento no solo de software, sino también del hardware a utilizar, ya que el correcto aprovechamiento de las capacidades de los aceleradores integrados en dispositivos de bajo consumo y procesamiento puede definir su funcionalidad frente a aplicaciones demandantes de recursos, como el procesamiento de video.
 
-- La utilización de YoctoProject como flujo de trabajo de desarrollo de sistemas embebidos es aceptado por la gran gama de personalización y adaptación de su sistema, además del gran desarrollo de la proporcionado por su comunidad y documentación disponible haciendo que empresas como Intel se integren el desarrollo de YoctoProject con documentación y aplicaciones y por su amplia compatibilidad con diversos sistemas embebidos. 
+- La utilización de Yocto Project como flujo de trabajo para el desarrollo de sistemas embebidos es ampliamente aceptada gracias a su gran capacidad de personalización y adaptación. Además, cuenta con el respaldo de una comunidad activa y una amplia documentación, lo que ha llevado a empresas como Intel a integrarse al desarrollo del proyecto, aportando documentación y aplicaciones, y asegurando su compatibilidad con diversos sistemas embebidos.
 
 ### Recomendaciones 
-- Para la integración de capas personalizadas desde cero, requiere de un proceso largo de solución de dependencias y solución de errores, por lo que revisar la documentación del flujo de desarollo es fundamental antes de iniciar con cualquier proyecto. De no ser así, es recomendable ajustar la aplicación a capas ya desarrolladas anteriormente.  
+- La integración de capas personalizadas desde cero requiere un proceso extenso de resolución de dependencias y corrección de errores. Por ello, es importante revisar la documentación del flujo de desarrollo antes de iniciar cualquier proyecto. En caso contrario, es recomendable adaptar la aplicación a capas ya desarrolladas previamente.
+
+- Aún es necesario integrar la capa DLStreamer, que permita añadir los plugins necesarios para GStreamer, a fin de ejecutar modelos de inteligencia artificial con OpenVINO. Esto requiere un análisis profundo de las dependencias y un proceso de compilación adecuado para integrar los métodos a la biblioteca de GStreamer.
+
+- Es importante aprovechar las características del hardware objetivo. En este caso, al trabajar con una máquina virtual, se definieron características mínimas. Sin embargo, si se tratara de una implementación física, se deben estudiar sus capacidades antes de establecer el flujo de trabajo.
 
 
 # Referencias

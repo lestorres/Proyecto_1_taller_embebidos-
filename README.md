@@ -424,7 +424,7 @@ core-image-minimal-qemux86-64.rootfs-20250418215706.wic.vdi
 Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotamente de la siguiente manera:
 
 <p align="center">
-  <img src="images_tutorial/vitualvox_conf.png"  width="1000"/>
+  <img src="images_tutorial/virtual_box_conf.png"  width="1000"/>
 </p>
 
 
@@ -473,7 +473,7 @@ python3 reproducir.py
 Esta operación debe mostrar lo siguiente: 
 
 <p align="center">
-  <img src="images_tutorial/reproducir_1.png"  width="1000"/>
+  <img src="images_tutorial/run_virtual_box_1.png"  width="1000"/>
 </p>
 
 

@@ -149,24 +149,15 @@ git pull
 yocto/
 │
 ├── bitbake/                       # Motor de construcción BitBake
-│
 ├── build/                         # Directorio de trabajo (generado tras ejecutar oe-init-build-env)
-│
-├── documentation/                # Documentación de Poky y Yocto Project
-│
+├── documentation/                 # Documentación de Poky y Yocto Project
 ├── meta/                          # Meta-capa principal de OpenEmbedded-Core (recetas base)
-│
 ├── meta-poky/                     # Configuración y contenido base de Poky
-│
 ├── meta-selftest/                 # Pruebas automáticas para verificar integridad de recetas y configuraciones
-│
 ├── meta-skeleton/                 # Plantillas básicas para crear recetas y capas
-│
 ├── meta-yocto-bsp/                # Soporte de Board Support Packages (BSPs)
-│
 ├── oe-init-build-env              # Script para inicializar el entorno de construcción
-│
-└── README*.md                 # Documentacion
+└── README*.md                     # Documentacion
 ```
 
 ### Dependencias de la capa OpenVino y meta-mylayer
@@ -228,7 +219,7 @@ meta-mylayer/
 │   └── layer.conf
 └── README
 ```
-Sobre el directorio meta-mylayer se debe copiar la capa "meta-mylayer" del repositorio de git Proyecto_1_taller_embebidos, de forma que sea: 
+5. Sobre el directorio meta-mylayer se debe copiar la capa "meta-mylayer" del repositorio de git Proyecto_1_taller_embebidos, de forma que sea: 
 
 ```plaintext
 meta-mylayer/
@@ -236,7 +227,7 @@ meta-mylayer/
             └── layer.conf
       ├── COPYING.MIT
       ├── README
-      ├── recipes-myproject/
+      └── recipes-myproject/
              └── myapp/
                      ├── myapp_1.0.bb
                      └── files/
@@ -266,60 +257,89 @@ multimedia-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-mu
 networking-layer      /home/laptop/yocto/poky/build/../meta-openembedded/meta-networking       5
 intel                 /home/laptop/yocto/poky/build/../meta-intel                              5
 clang-layer           /home/laptop/yocto/poky/build/../meta-clang                              7
-meta-mylayer          /home/lesme/yocto/poky/meta-mylayer                                      6     -La capa de la aplicación..!!
+meta-mylayer          /home/lesme/yocto/poky/meta-mylayer                                      6     --> La capa de la aplicación..!!
 ```
 
-
+**Nota:** A este punto debería implementarse la capa de Dlstreamer que añade funciones a Gstreamer requeridas para la correcta ejecución de la aplicación, 
+actualmente no existe una capa de dlstreamer oficial, por lo que no se implementó, lo que conlleva a futuro la labor de crearla de manera manual, con todos
+los retos asociados tanto de dependencias como de compilación para un entorno de YoctoProject de imagen mínima.
 
 ### Estructura de archivos de los contenidos importantes en Yocto Project completo 
-
+Para este punto debería estar esta estructura de directorios: 
 ```plaintext
 yocto/
 │
 ├── bitbake/                       # Motor de construcción BitBake
-│
 ├── build/                         # Directorio de trabajo (generado tras ejecutar oe-init-build-env)
-│
 ├── contrib/                       # Scripts y herramientas de la comunidad
-│
-├── documentation/                # Documentación de Poky y Yocto Project
-│
+├── documentation/                 # Documentación de Poky y Yocto Project
 ├── meta/                          # Meta-capa principal de OpenEmbedded-Core (recetas base)
-│
 ├── meta-clang/                    # Soporte para compilador Clang/LLVM
-│
 ├── meta-intel/                    # Capas para plataformas Intel
-│
 ├── meta-mylayer/                  # Capa personalizada
-│   ├── conf/                      # Configuración de la capa
-│   │   └── layer.conf             # Definición de la capa
-│   └── recipes-myproject/         # Recetas de del proyeto
-│                 
-│
-├── meta-openembedded/            # Conjunto de capas adicionales de OpenEmbedded
-│
+│   ├── conf/                        # Configuración de la capa
+│   │   └── layer.conf               # Definición de la capa
+│   └── recipes-myproject/           # Recetas de del proyeto
+├── meta-openembedded/             # Conjunto de capas adicionales de OpenEmbedded
 ├── meta-poky/                     # Configuración y contenido base de Poky
-│
 ├── meta-selftest/                 # Pruebas automáticas para verificar integridad de recetas y configuraciones
-│
 ├── meta-skeleton/                 # Plantillas básicas para crear recetas y capas
-│
 ├── meta-yocto-bsp/                # Soporte de Board Support Packages (BSPs)
-│
 ├── oe-init-build-env              # Script para inicializar el entorno de construcción
-│
 ├── scripts/                       # Scripts de ayuda para tareas del sistema Yocto
-│
 ├── README*.md                     # Documentación adicional
-│
 └── SECURITY.md, LICENSE*, etc.    # Archivos legales y de seguridad
 ```
 
+7. Como último paso, en el directorio `~/yocto/poky/build/conf$`, existe el archivo llamado `local.conf`, a este se le debe reemplazar por el archivo `local.conf`
+   dentro del repositorio git Proyecto_1_taller_embebidos, ubicado en:
 
+```plaintext
+Proyecto_1_taller_embebidos/
+    └── yocto/
+        └── build-templates/
+            ├── bblayers.conf
+            └── local.conf
+```
+Los paquetes instalados son: 
 
+```plaintext
 
+IMAGE_INSTALL:append = " \
+    python3 \
+    ffmpeg \
+    openssh \
+    xauth \
+    gstreamer1.0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    myapp \
+    xterm \
+    opkg \
+    dhcpcd\
+"
+#Manejador de ventanas
+#DISTRO_FEATURES:append = " x11 opengl"
+PACKAGECONFIG:append:pn-openssh=" x11"
+#permisos
+LICENSE_FLAGS_ACCEPTED += "commercial"
+#Manejador de paquetes
+EXTRA_IMAGE_FEATURES += "package-management"
 
-### Crear imagen completa
+#----------------OPEN VINO intel ---------------
+PACKAGECONFIG:append:pn-openvino-inference-engine = " opencl"
+PACKAGECONFIG:append:pn-openvino-inference-engine = " python3"
+CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine"
+CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-samples"
+CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-python3"
+
+IMAGE_FSTYPES = "wic.vdi" # tipo de disco para maquina virtual
+```
+
+### Crear imagen completa (A cocinar...!)
 
 ```plaintext
 bitbake core-image-minimal
@@ -327,23 +347,37 @@ bitbake core-image-minimal
 
 ## Emulación de la imagen con Qemu
 
-### Emular imagen generada
+### Prerequisitos
+Para conservar las ventajas de la imagen minima, vale la pena utilizar el gestor de ventanas propio de la computadora host, por lo que se debería tener instalado un cliente ssh como: 
+
+```plaintext
+   openssh-client
+```
+y un gestor de ventanas como:
+
+```plaintext
+   xauth x11-xserver-utils
+```
+en caso de no tenerlo instalado:
+
+```plaintext
+sudo apt-get install openssh-client xauth x11-xserver-utils
+```
+### Emular imagen generada con Qemu
 
 ```plaintext
 runqemu qemux86-64
 ```
 
-
-
-
-
-
-
-
-### Conexión ssh para utilizar el gestor de ventanas de la computadora (única para cada computadora)
+### Conexión ssh para utilizar el gestor de ventanas de la computadora (única para cada red)
+1. Verificar red eth0
 
 ```plaintext
-ssh -X root@192.168.7.2
+ip a
+```
+2. Conectar
+```plaintext
+ssh -X root@<ip-eth0>
 ```
 
 ### Prueba de multimedia Gstreamer
@@ -374,12 +408,7 @@ cd /usr/bin/myapp
 python3 reproducir.py
 ```
 
-## VirtualBox
-
-
-
-
-
+## Configuración del Entorno: Imagen minima en VirtualBox
 
 La imagen una vez cocinada, se encontrará ubicada en el directorio:
 
@@ -392,27 +421,34 @@ La imagen a utilizar en Virtual-Box será:
 ```plaintext
 core-image-minimal-qemux86-64.rootfs-20250418215706.wic.vdi
 ```
+Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotamente de la siguiente manera:
 
-Se debe configurar una dirección ip para acceder a la máquina virtual
+<p align="center">
+  <img src="images_tutorial/vitualvox_conf.png"  width="1000"/>
+</p>
+
+
+
+Una vez iniciada la maquina virtual, se debe configurar una dirección ip para acceder a la máquina virtual de manera remota.
 
 ```plaintext
 dhcpcd eth0
 ```
 
-Verificar la ip de eth0
+Verificar la ip de eth0 para ingresar por medio de ssh.
 
 ```plaintext
 ip a
 ```
 
-### Conexión ssh para utilizar el gestor de ventanas de la computadora
+### Conexión ssh para utilizar el gestor de ventanas de la computadora host
 
 ```plaintext
 ssh -X root@<ip-eth0>
 ```
 
 ### Verificar el contenido de la aplicación
-Al ingresar:
+Al ingresar a la máquina virtual, es importante comprobar el contenido de la aplicación:
 
 ```plaintext
 ls /usr/bin/myapp
@@ -434,9 +470,22 @@ cd /usr/bin/myapp
 python3 reproducir.py
 ```
 
+Esta operación debe mostrar lo siguiente: 
+
+<p align="center">
+  <img src="images_tutorial/reproducir_1.png"  width="1000"/>
+</p>
+
+
+# Problemas encontrados y soluciones implementadas
+
+
+# Conclusiones y recomendaciones del proyecto
+
+
 # Referencias
-[1] L. Murillo, "openvino-workshop-tec," GitHub, 2025. [Online]. Available: https://github.com/lumurillo/openvino-workshop-tec
-[2] Yocto Project, “Yocto Project Documentation,” The Linux Foundation, [Online]. Available: https://docs.yoctoproject.org/
-[3]Intel Corporation, “Installing OpenVINO™ Toolkit with Yocto Project,” OpenVINO Documentation, 2023. [Online]. Available: https://docs.openvino.ai/2023.3/openvino_docs_install_guides_installing_openvino_yocto.html.
+- [1] L. Murillo, "openvino-workshop-tec," GitHub, 2025. [Online]. Available: https://github.com/lumurillo/openvino-workshop-tec
+- [2] Yocto Project, “Yocto Project Documentation,” The Linux Foundation, [Online]. Available: https://docs.yoctoproject.org/
+- [3]Intel Corporation, “Installing OpenVINO™ Toolkit with Yocto Project,” OpenVINO Documentation, 2023. [Online]. Available: https://docs.openvino.ai/2023.3/openvino_docs_install_guides_installing_openvino_yocto.html.
 
 

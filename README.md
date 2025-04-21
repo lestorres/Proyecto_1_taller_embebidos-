@@ -268,7 +268,7 @@ meta-mylayer          /home/lesme/yocto/poky/meta-mylayer                       
 
 **Nota:** A este punto debería implementarse la capa de Dlstreamer que añade funciones a Gstreamer requeridas para la correcta ejecución de la aplicación, 
 actualmente no existe una capa de dlstreamer oficial, por lo que no se implementó, lo que conlleva a futuro la labor de crearla de manera manual, con todos
-los retos asociados tanto de dependencias como de compilación para un entorno de YoctoProject de imagen mínima.
+los retos asociados tanto de dependencias como de compilación para un entorno de YoctoProject de imagen mínima [4].
 
 ### Estructura de archivos de los contenidos importantes en Yocto Project completo 
 Para este punto debería estar esta estructura de directorios: 
@@ -484,7 +484,103 @@ Esta operación debe mostrar lo siguiente:
 
 
 # Problemas encontrados y soluciones implementadas
+1. Error por no lograr implemetar los pluggins de GLstreamer (NO SOLUCIONADO)
 
+```plaintext
+   ModuleNotFoundError: No module named 'cv2'
+root@qemux86-64:/usr/bin/myapp# gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
+Setting pipeline to PAUSED ...
+error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+MESA: error: ZINK: vkEnumeratePhysicalDevices failed (VK_ERROR_INITIALIZATION_FAILED)
+MESA: error: ZINK: failed to choose pdev
+glx: failed to create drisw screen  se quedó aghí
+```
+El problema residen en que se **Necesita de una capa con Glstramer** la cual requiere una compilación, ya que no existe ninguna capa oficial que se pueda implementar fácilmente,
+habría que hacerla de forma manual y conocimientos más profundos en las dependecian inclusive del sistema operativo, ya que este está planeado para funcionar únicamente en ubuntu y 
+en contenedores Docker, requiere de un proceso de compilación y añadir las características directo en la biblioteca de GSTREAMER, cosa que no se logró después de varios intentos. 
+
+
+2. Error al cocinar por no inicializar cada repositorio con el respectivo branch de scarthgap.(Solucionado)
+   El error se solucionaba al realizar "git checkout -t origin/scarthgap -b my-scarthgap" en cada uno de los repositorios clonados.
+   
+3. Error a la hora de crear la capa "meta-mylayer"
+
+
+4. Error por no contar con entorno gráfico X11 o gui (solucionado)
+```plaintext
+root@qemux86-64:/usr/bin/myapp# gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
+Setting pipeline to PAUSED ...
+error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+MESA: error: ZINK: vkEnumeratePhysicalDevices failed (VK_ERROR_INITIALIZATION_FAILED)
+MESA: error: ZINK: failed to choose pdev
+glx: failed to create drisw screen
+Killed
+```
+La principal solución con tal de mantener una imagen mínima fue utilizar conexión por medio de ssh, para no malgastar recursos en una imagen con interfaz gráfica.
+
+5. Latencia en la reproducción del video
+   Este error indicaba que la computadora era muy lenta, se solucionó cambiando el pipeline de la siguiente manera:
+```plaintext
+gst-launch-1.0 videotestsrc ! videoconvert ! autovideosink
+```
+esto por esto
+```plaintext 
+gst-launch-1.0 videotestsrc ! videoconvert ! ximagesink   
+```
+El problema se da porque no se tiene acceso al GPU y se debe realizar lo calculos utilizando CPU, al procesar un video con imagenes mejora el rendimiento.
+
+7. Videos de más de 1 minuto de duración (NO SOLUCIONADO)
+```plaintext
+   root@qemux86-64:/usr/bin/myapp/inputs# gst-launch-1.0 filesrc location=/usr/bin/myapp/inputs/conduccion_1.mp
+4 ! decodebin ! autovideosink
+Setting pipeline to PAUSED ...
+error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+MESA: error: ZINK: vkEnumeratePhysicalDevices failed (VK_ERROR_INITIALIZATION_FAILED)
+MESA: error: ZINK: failed to choose pdev
+glx: failed to create drisw screen
+Pipeline is PREROLLING ...
+Got context from element 'autovideosink0': gst.gl.GLDisplay=context, gst.gl.GLDisplay=(GstGLDisplay)"\(GstGLDisplayX11\)\ gldisplayx11-0";
+Redistribute latency...
+Missing element: H.264 (Main Profile) decoder
+Missing element: MPEG-4 AAC decoder
+ERROR: from element /GstPipeline:pipeline0/GstDecodeBin:decodebin0: Your GStreamer installation is missing a plug-in.
+Additional debug info:
+/usr/src/debug/gstreamer1.0-plugins-base/1.22.12/gst/playback/gstdecodebin2.c(4705): gst_decode_bin_expose (): /GstPipeline:pipeline0/GstDecodeBin:decodebin0:
+no suitable plugins found:
+Missing decoder: H.264 (Main Profile) (video/x-h264, stream-format=(string)avc, alignment=(string)au, level=(string)4.1, profile=(string)main, codec_data=(buffer)014d4029ffe10016674d402995a0360f79f8400000fa00003a9803c70aa801000468ee3c80, width=(int)852, height=(int)480, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, coded-picture-structure=(string)frame, chroma-format=(string)4:2:0, bit-depth-luma=(uint)8, bit-depth-chroma=(uint)8, parsed=(boolean)true)
+Missing decoder: MPEG-4 AAC (audio/mpeg, mpegversion=(int)4, framed=(boolean)true, stream-format=(string)raw, level=(string)2, base-profile=(string)lc, profile=(string)lc, codec_data=(buffer)1190, rate=(int)48000, channels=(int)2)
+
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+Freeing pipeline ...
+```
+Este error requiere de la instalación de un decodificador de gstreamer "gstreamer1.0-plugins-ugly" pero ya se encontraba instalado, de momento se utilzaron video de menor duración.
+
+
+7. Error de licencias
+```plaintext
+   Sstate summary: Wanted 10 Local 0 Mirrors 0 Missed 10 Current 263 (0% match, 96% complete)   | ETA:  0:00:00
+Initialising tasks: 100% |###################################################################| Time: 0:00:01
+NOTE: Executing Tasks
+ERROR: myapp-1.0-r0 do_populate_lic: QA Issue: myapp: The LIC_FILES_CHKSUM does not match for file:///home/lesme/yocto/poky/meta/files/common-licenses/MIT;md5=0835c1a6b8c6f16c2ff95f9e2683c5b7
+myapp: The new md5 checksum is 0835ade698e0bcf8506ecda2f7b4f302
+myapp: Here is the selected license text:
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+MIT License
+
+myapp: Check if the license information has changed in /home/lesme/yocto/poky/meta/files/common-licenses/MIT to verify that the LICENSE value "MIT" remains valid [license-checksum]
+ERROR: myapp-1.0-r0 do_populate_lic: Fatal QA errors were found, failing task.
+ERROR: Logfile of failure stored in: /home/lesme/yocto/poky/build/tmp/work/core2-64-poky-linux/myapp/1.0/temp/log.do_populate_lic.307222
+ERROR: Task (/home/lesme/yocto/poky/meta-mylayer/recipes-myproject/myapp/myapp_1.0.bb:do_populate_lic) failed with exit code '1'
+NOTE: Tasks Summary: Attempted 820 tasks of which 812 didn't need to be rerun and 1 failed.
+
+Summary: 1 task failed:
+  /home/lesme/yocto/poky/meta-mylayer/recipes-myproject/myapp/myapp_1.0.bb:do_populate_lic
+    log: /home/lesme/yocto/poky/build/tmp/work/core2-64-poky-linux/myapp/1.0/temp/log.do_populate_lic.307222
+Summary: There were 2 ERROR messages, returning a non-zero exit code.
+```
+Este error sucedio porque por error se eliminó la linea de local_cong de "LIC_FILES_CHKSUM += commercial"
 
 # Conclusiones y recomendaciones del proyecto
 

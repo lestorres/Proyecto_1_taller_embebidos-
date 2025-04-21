@@ -87,9 +87,6 @@ A este punto la aplicación debe mostrar lo siguiente:
   <img src="images_tutorial/docker_1.png"  width="1000"/>
 </p>
 
-
-
-
 ## Configuración del Entorno: Imagen minima YoctoProject
 
 ---
@@ -104,7 +101,6 @@ A este punto la aplicación debe mostrar lo siguiente:
   - Modelo preentrenado seleccionado desde OpenVINO™ Model Zoo
 - **Propósito:** Ejecutar la aplicación final de procesamiento multimedia en un entorno controlado y reproducible
 ---
-
 
 ### Prerequisitos del sistema
 Según la documentación de YoctoProject [2] se requiere:
@@ -168,6 +164,16 @@ La documentación de intel para OpenVino [3] indica los siguientes pasos para su
 git clone https://git.yoctoproject.org/meta-intel
 git clone https://git.openembedded.org/meta-openembedded
 git clone https://github.com/kraj/meta-clang.git
+```
+
+1.2 Cambiar a la rama de scarthgap y hacer pull en cada uno de los repositorios clonados:
+   
+ ```plaintext
+$ git branch -a
+```
+
+```plaintext
+git checkout -t origin/scarthgap -b my-scarthgap
 ```
 
 2. Añadir las capas requieridas dentro del entorno `oe-init-build-env`.
@@ -487,5 +493,6 @@ Esta operación debe mostrar lo siguiente:
 - [1] L. Murillo, "openvino-workshop-tec," GitHub, 2025. [Online]. Available: https://github.com/lumurillo/openvino-workshop-tec
 - [2] Yocto Project, “Yocto Project Documentation,” The Linux Foundation, [Online]. Available: https://docs.yoctoproject.org/
 - [3]Intel Corporation, “Installing OpenVINO™ Toolkit with Yocto Project,” OpenVINO Documentation, 2023. [Online]. Available: https://docs.openvino.ai/2023.3/openvino_docs_install_guides_installing_openvino_yocto.html.
+- [4] Intel Corporation. Intel® Deep Learning Streamer (DL Streamer) Documentation, 2023. [Online]. Available: https://dlstreamer.github.io/elements/gvadetect.html
 
 

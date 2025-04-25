@@ -439,9 +439,25 @@ Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotam
   <img src="images_tutorial/virtual_box_conf.png"  width="1000"/>
 </p>
 
+Buscar la ip local en una terminal fuera de yocto,
+
+```plaintext
+traceroute 8.8.8.8
+```
+
+En respuesta deberia retornar por algo como:
+
+```plaintext
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  laptop.mshome.net (172.19.80.1)  0.416 ms  0.352 ms  0.310 ms
+ 2  192.168.1.1 (192.168.1.1)  2.259 ms  2.370 ms  2.214 ms
+...
+```
 
 
 Una vez iniciada la maquina virtual, se debe configurar una dirección ip para acceder a la máquina virtual de manera remota.
+
+
 
 ```plaintext
 dhcpcd eth0

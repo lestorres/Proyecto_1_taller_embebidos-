@@ -515,7 +515,7 @@ Setting pipeline to PAUSED ...
 error: XDG_RUNTIME_DIR is invalid or not set in the environment.
 MESA: error: ZINK: vkEnumeratePhysicalDevices failed (VK_ERROR_INITIALIZATION_FAILED)
 MESA: error: ZINK: failed to choose pdev
-glx: failed to create drisw screen  se quedó aghí
+glx: failed to create drisw screen
 ```
 El problema residen en que se **Necesita de una capa con Glstramer** la cual requiere una compilación, ya que no existe ninguna capa oficial que se pueda implementar fácilmente,
 habría que hacerla de forma manual y conocimientos más profundos en las dependecian inclusive del sistema operativo, ya que este está planeado para funcionar únicamente en ubuntu y 

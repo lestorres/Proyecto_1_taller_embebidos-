@@ -322,9 +322,9 @@ PARALLEL_MAKE = "-j6"
 
 
 #--------------------------------------
-
 IMAGE_INSTALL:append = " \
     python3 \
+    python3-opencv \
     ffmpeg \
     openssh \
     xauth \
@@ -355,7 +355,7 @@ CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-samples"
 CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-python3"
 
 #imagen para de disco virtual para  virtualbox
-IMAGE_FSTYPES = "wic.vdi"
+IMAGE_FSTYPES = "wic.vdi" 
 
 ```
 
@@ -377,17 +377,11 @@ bitbake core-image-minimal
 Para conservar las ventajas de la imagen minima, vale la pena utilizar el gestor de ventanas propio de la computadora host, por lo que se debería tener instalado un cliente ssh como: 
 
 ```plaintext
-   openssh-client
+openssh-server
 ```
-y un gestor de ventanas como:
-
+En caso de no tenerlo instalado: 
 ```plaintext
-   xauth x11-xserver-utils
-```
-en caso de no tenerlo instalado:
-
-```plaintext
-sudo apt-get install openssh-client xauth x11-xserver-utils
+sudo apt install openssh-server 
 ```
 ### Emular imagen generada con Qemu
 
@@ -433,6 +427,14 @@ cd /usr/bin/myapp
 ```plaintext
 python3 reproducir.py
 ```
+Desplegando la siguiente ventana
+
+
+<p align="center">
+  <img src="images_tutorial/run_qemu_1.png"  width="1000"/>
+</p>
+
+
 
 ## Configuración del Entorno: Imagen minima en VirtualBox
 
@@ -445,7 +447,7 @@ La imagen una vez cocinada, se encontrará ubicada en el directorio:
 La imagen a utilizar en Virtual-Box será:
 
 ```plaintext
-core-image-minimal-qemux86-64.rootfs-20250421021442.wic.vdi
+core-image-minimal-qemux86-64.rootfs-20250427212645.wic.vdi
 ```
 Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotamente de la siguiente manera:
 
@@ -458,20 +460,21 @@ Buscar la ip local en una terminal fuera de yocto,
 ```plaintext
 traceroute 8.8.8.8
 ```
+En caso de no tenerlo:
+```plaintext
+sudo apt install traceroute
+```
 
-En respuesta deberia retornar por algo como:
+Se busca la direccion Ip local, y en respuesta deberia retornar por algo como:
 
 ```plaintext
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
- 1  laptop.mshome.net (172.19.80.1)  0.416 ms  0.352 ms  0.310 ms
+ 1  laptop.mshome.net (172.19.80.1)  0.416 ms  0.352 ms  0.310 ms  <-- Esta primera IP es la que se necesita
  2  192.168.1.1 (192.168.1.1)  2.259 ms  2.370 ms  2.214 ms
 ...
 ```
 
-
-Una vez iniciada la maquina virtual, se debe configurar una dirección ip para acceder a la máquina virtual de manera remota.
-
-
+Una vez recuperada, se inicializa la maquina virtua y se debe configurar una dirección ip para acceder a la máquina virtual de manera remota.
 
 ```plaintext
 dhcpcd eth0
@@ -486,7 +489,7 @@ ip a
 ### Conexión ssh para utilizar el gestor de ventanas de la computadora host
 
 ```plaintext
-ssh -X root@<ip-eth0>
+ssh -X root@<IP> -p 2222
 ```
 
 ### Verificar el contenido de la aplicación
@@ -615,7 +618,41 @@ Summary: 1 task failed:
     log: /home/lesme/yocto/poky/build/tmp/work/core2-64-poky-linux/myapp/1.0/temp/log.do_populate_lic.307222
 Summary: There were 2 ERROR messages, returning a non-zero exit code.
 ```
-- Este error sucedio porque por error se eliminó la linea de local_cong de "LIC_FILES_CHKSUM += commercial"
+- Este error sucedió porque por error se eliminó la linea de local_cong de "LIC_FILES_CHKSUM += commercial"
+
+7. Error de carga de modelo de OpenVino (No solucionado)
+   
+<p align="center">
+  <img src="images_tutorial/openvino_error.png"  width="1000"/>
+</p>
+
+- Este error se debe a incompatibildad entre la forma de decodificación de openVino y la codificación del modelo, es posible que este modelo no este soportado para la versión de openvino de yocto utilizada.
+
+8. Error de resolución del video (Solucionado)
+<p align="center">
+  <img src="images_tutorial/resolucion_video_error.png"  width="1000"/>
+</p>
+
+Este error se daba cuando se reproducía el video de entrada, este error empeoraba la latencia, en la reproducción del video, se redujo al reducir la calidad del video.
+
+```plaintext
+import os
+from utils.gst_utils import gst_launch
+
+# Ruta al archivo de entrada
+INPUT_PATH = "/usr/bin/myapp/inputs/conduccion_2.mp4"
+INPUT_URI = f"file://{INPUT_PATH}"
+
+# Pipeline solo para reproducir video usando ximagesink
+pipeline_str = (
+    f'urisourcebin buffer-size=4096 uri={INPUT_URI} ! '
+    f'decodebin ! '
+    f'videoconvert ! '
+    f'videoscale ! '
+    f'video/x-raw,width=1280,height=720 ! '
+    f'appsink sync=false'
+)
+```
 
 # Conclusiones y recomendaciones del proyecto
 

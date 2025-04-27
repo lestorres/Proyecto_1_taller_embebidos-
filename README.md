@@ -389,6 +389,7 @@ sudo apt install openssh-server
 runqemu qemux86-64
 ```
 
+
 ### Conexión ssh para utilizar el gestor de ventanas de la computadora (única para cada red)
 1. Verificar red eth0
 
@@ -453,6 +454,12 @@ Se debe configurar la aplicación de VirtualBox para acceder a la imagen remotam
 
 <p align="center">
   <img src="images_tutorial/virtual_box_conf.png"  width="1000"/>
+</p>
+
+y las características de la máquina virtual utilizada:
+
+<p align="center">
+  <img src="images_tutorial/virtual_box_virtual_machine.png"  width="1000"/>
 </p>
 
 Buscar la ip local en una terminal fuera de yocto,

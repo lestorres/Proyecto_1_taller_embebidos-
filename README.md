@@ -129,7 +129,7 @@ cd poky
 2) Cambiar a la rama de scarthgap y hacer pull:
    
  ```plaintext
-$ git branch -a
+git branch -a
 ```
 
 ```plaintext
@@ -169,7 +169,7 @@ git clone https://github.com/kraj/meta-clang.git
 1.2 Cambiar a la rama de scarthgap y hacer pull en cada uno de los repositorios clonados:
    
  ```plaintext
-$ git branch -a
+git branch -a
 ```
 
 ```plaintext
@@ -179,7 +179,7 @@ git checkout -t origin/scarthgap -b my-scarthgap
 2. Añadir las capas requieridas dentro del entorno `oe-init-build-env`.
 
 ```plaintext
-source poky/oe-init-build-env
+source oe-init-build-env
 ```
 
 ```plaintext
@@ -244,6 +244,11 @@ meta-mylayer/
                             ├── models/
                             └── utils/
 ```
+Se añade de la siguiente manera
+```plaintext
+bitbake-layers add-layer ../meta-mylayer
+```
+
 Ahora se debe verificar nuevamente
 ```plaintext
 bitbake-layers show-layers
@@ -311,6 +316,13 @@ Los paquetes instalados son:
 
 ```plaintext
 
+#--------Limitar threads---------
+BB_NUMBER_THREADS = "6"
+PARALLEL_MAKE = "-j6"
+
+
+#--------------------------------------
+
 IMAGE_INSTALL:append = " \
     python3 \
     ffmpeg \
@@ -342,7 +354,9 @@ CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine"
 CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-samples"
 CORE_IMAGE_EXTRA_INSTALL:append = " openvino-inference-engine-python3"
 
-IMAGE_FSTYPES = "wic.vdi" # tipo de disco para maquina virtual
+#imagen para de disco virtual para  virtualbox
+IMAGE_FSTYPES = "wic.vdi"
+
 ```
 
 ### Crear imagen completa (A cocinar...!)
